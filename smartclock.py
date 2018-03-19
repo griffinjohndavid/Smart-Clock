@@ -1,6 +1,3 @@
-# John David Griffin and Sage White
-# RPi Clock Center
-
 # Imports
 from tkinter import *
 import time
@@ -11,7 +8,6 @@ import traceback
 import json
 from contextlib import contextmanager
 from PIL import Image, ImageTk
-from tkinterhtml import HtmlFrame
 import re #regex
 
 # Globals
@@ -56,6 +52,12 @@ def setlocale(name): #thread proof function to work with locale
         finally:
             locale.setlocale(locale.LC_ALL, saved)
 
+def changeTimeFormat(event):
+    if globals()['time_format'] == 12:
+        globals()['time_format'] = 24
+    elif globals()['time_format'] == 24:
+        globals()['time_format'] = 12
+
 
 # Clock Class adapted from Smart-Mirror (https://github.com/HackerHouseYT/Smart-Mirror)
 class Clock(Frame):
@@ -66,6 +68,7 @@ class Clock(Frame):
         self.time1 = ''
         self.timeLbl = Label(self, font=('Helvetica', large_text_size), fg="white", bg="black")
         self.timeLbl.pack(side=TOP, anchor=E)
+        self.timeLbl.bind("<Button-1>", changeTimeFormat)
 
         # initialize day of week
         # self.day_of_week1 = ''
@@ -82,9 +85,9 @@ class Clock(Frame):
     def tick(self):
         with setlocale(ui_locale):
             if time_format == 12:
-                time2 = time.strftime('%-I:%M %p') #hour in 12h format
+                time2 = time.strftime('X%I:%M %p').replace('X0','X').replace('X','') #hour in 12h format
             else:
-                time2 = time.strftime('%H:%M') #hour in 24h format
+                time2 = time.strftime('X%H:%M').replace('X0','X').replace('X','') #hour in 24h format
 
             day_of_week2 = time.strftime('%A')
             date2 = time.strftime(date_format)
@@ -97,12 +100,6 @@ class Clock(Frame):
             if fulldate2 != self.fulldate:
                 self.fulldate = fulldate2
                 self.dayOWLbl.config(text=fulldate2)
-#            if day_of_week2 != self.day_of_week1:
-#                self.day_of_week1 = day_of_week2
-#                self.dayOWLbl.config(text=day_of_week2)
-#            if date2 != self.date1:
-#                self.date1 = date2
-#                self.dateLbl.config(text=date2)
 
             # calls itself every 200 milliseconds
             # to update the time display as needed
@@ -123,6 +120,7 @@ class Weather(Frame):
         self.degreeFrm.pack(side=TOP, anchor=W)
         self.temperatureLbl = Label(self.degreeFrm, font=('Helvetica', large_text_size), fg="white", bg="black")
         self.temperatureLbl.pack(side=LEFT, anchor=N)
+        self.temperatureLbl.bind("<Button-1>", self.changeWeatherFormat)
         self.iconLbl = Label(self.degreeFrm, bg="black")
         self.iconLbl.pack(side=LEFT, anchor=N, padx=20)
         self.currentlyLbl = Label(self, font=('Helvetica', medium_text_size), fg="white", bg="black")
@@ -142,6 +140,14 @@ class Weather(Frame):
         except Exception as e:
             traceback.print_exc()
             return "Error: %s. Cannot get ip." % e
+
+    def changeWeatherFormat(self, event2):
+        if globals()['weather_unit'] == 'us':
+            globals()['weather_unit'] = 'si'
+        elif globals()['weather_unit'] == 'si':
+            globals()['weather_unit'] = 'us'
+
+        self.get_weather()
 
     def get_weather(self):
         try:
@@ -286,10 +292,6 @@ class FullscreenWindow:
         # VERSE
         self.verse = RandomVerse(self.bottomFrame)
         self.verse.pack(side=LEFT, anchor=S, padx=60, pady=60)
-
-        # calender - removing for now
-        # self.calender = Calendar(self.bottomFrame)
-        # self.calender.pack(side = RIGHT, anchor=S, padx=100, pady=60)
 
     def toggle_fullscreen(self, event=None):
         self.state = not self.state  # Just toggling the boolean

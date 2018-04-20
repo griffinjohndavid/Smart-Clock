@@ -15,10 +15,10 @@ LOCALE_LOCK = threading.Lock()
 ui_locale = '' # 'en_US' for English (Default: '') - For help: https://stackoverflow.com/a/3191729
 time_format = 12 # 12 or 24 (MUST BE A NUMBER)
 date_format = "%b %d, %Y" # Format for strftime() (Default: "%b %d, %Y") - For help: http://strftime.org/
-xlarge_text_size = 90
-large_text_size = 45
-medium_text_size = 30
-small_text_size = 15
+xlarge_text_size = 70
+large_text_size = 32
+medium_text_size = 18
+small_text_size = 12
 weather_api_token = 'ce4a1fcd2f9c208b7823b933e764cc3a' # create account at https://darksky.net/dev/
 weather_lang = 'en' # see https://darksky.net/dev/docs/forecast for full list of language parameters values
 weather_unit = 'us' # see https://darksky.net/dev/docs/forecast for full list of unit parameters values
@@ -125,7 +125,7 @@ class Weather(Frame):
         self.iconLbl.pack(side=LEFT, anchor=N, padx=20)
         self.currentlyLbl = Label(self, font=('Helvetica', medium_text_size), fg="white", bg="black")
         self.currentlyLbl.pack(side=TOP, anchor=W)
-        self.forecastLbl = Label(self, font=('Helvetica', small_text_size), fg="white", bg="black")
+        self.forecastLbl = Label(self, font=('Helvetica', small_text_size), fg="white", bg="black",wraplength=375,justify="left")
         self.forecastLbl.pack(side=TOP, anchor=W)
         self.locationLbl = Label(self, font=('Helvetica', small_text_size), fg="white", bg="black")
         self.locationLbl.pack(side=TOP, anchor=W)
@@ -272,7 +272,7 @@ class RandomVerse(Frame):
 class FullscreenWindow:
     def __init__(self):
         self.tk = Tk()
-        self.tk.configure(background='black')
+        self.tk.configure(background='black', cursor='none')
         self.topFrame = Frame(self.tk, background = 'black')
         self.bottomFrame = Frame(self.tk, background = 'black')
         self.topFrame.pack(side = TOP, fill=BOTH, expand = YES)
